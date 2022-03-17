@@ -64,6 +64,7 @@ target/
 
 .ipynb*
 samples2/
+examples/
 
 # Ignore test files in Datas
 datas/*.py
