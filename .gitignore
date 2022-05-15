@@ -71,3 +71,4 @@ datas/*.py
 
 .idea/
 .vscode/
+*DS_Store

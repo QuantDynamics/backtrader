@@ -29,6 +29,7 @@ class BaoStockCSVData(bt.feeds.GenericCSVData):
     pctChg: 涨跌幅，小数点后六位
     isST: 是否ST
     """
+    lines = ('preclose', "volume", "amount", "adjustflag", "turn", "tradestatus", "pctChg", "isST")
     params = (
         ('nullvalue', float('NaN')),
         ('dtformat', '%Y-%m-%d'),
@@ -49,4 +50,3 @@ class BaoStockCSVData(bt.feeds.GenericCSVData):
         ('pctChg', 12),
         ('isST', 13),
     )
-
