@@ -1,23 +1,11 @@
 import os
-from enum import IntEnum, unique
 import baostock as bs
 import pandas as pd
 from utils.logger import StockLogger
+from collect_scripts.dump_stock import DumpStockBase
 
 
-@unique
-class StockDumpType(IntEnum):
-    # 下载开始日期的所有股票
-    START_DATE = 1
-    # 下载结束日期的所有股票
-    END_DATE = 2
-    # 下载开始日期和结束日期股票的并集
-    UNION = 3
-    # 下载开始日期和结束日期股票的交集
-    INTERSECTION = 4
-
-
-class BaoStockUtils(object):
+class BaoStockUtils(DumpStockBase):
     """
     This class encapsulate helper functions of baostock api
     这个类封装了各种baostock库的易用接口
@@ -27,7 +15,7 @@ class BaoStockUtils(object):
     """
     data_save_dir: str = "/data"
     file_dir = os.path.dirname(os.path.abspath(__file__))
-    log_path = os.path.join(os.path.dirname(file_dir), "log") 
+    log_path = os.path.join(os.path.dirname(file_dir), "log")
     logger = StockLogger(name="baostock", file_name=os.path.join(log_path, "baostock.log")).logger
 
     @staticmethod
@@ -56,6 +44,7 @@ class BaoStockUtils(object):
     @staticmethod
     def dump_stock_data(start_date: str = "2019-07-01",
                         end_date: str = "2021-07-01",
+                        feature_names: list = ["date", "code", "open", "high", "low", "close", "preclose", "volume", "amount", "adjustflag", "turn", "tradestatus", "pctChg", "isST"],
                         stock_dump_mode: StockDumpType = StockDumpType.END_DATE, 
                         stock_ids_dir: str = None,
                         save_data_dir: str = None):
@@ -118,9 +107,16 @@ class BaoStockUtils(object):
             os.makedirs(save_data_dir)
         for stock_id in dump_stock_ids:
             BaoStockUtils.logger.info(f"Download stock {stock_id} data")
+            fields = BaoStockUtils.feature_names_to_fields(feature_names)
             rs = bs.query_history_k_data_plus(
-                code=stock_id, fields="date,code,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST", start_date=start_date, end_date=end_date)
+                code=stock_id, fields=fields, start_date=start_date, end_date=end_date)
             data = rs.get_data()
             data.to_csv(os.path.join(save_data_dir, f"{stock_id}.csv"), index=False)
         bs.logout()
-        
+
+        @staticmethod
+        def feature_names_to_fields(feature_names):
+            fields = ""
+            for feature in feature_names:
+                fields += feature + ","
+            return fields[:-1]
