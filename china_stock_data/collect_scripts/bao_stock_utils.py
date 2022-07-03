@@ -2,7 +2,7 @@ import os
 import baostock as bs
 import pandas as pd
 from utils.logger import StockLogger
-from collect_scripts.dump_stock import DumpStockBase
+from collect_scripts.dump_stock import DumpStockBase, StockDumpType
 
 
 class BaoStockUtils(DumpStockBase):
@@ -16,6 +16,8 @@ class BaoStockUtils(DumpStockBase):
     data_save_dir: str = "/data"
     file_dir = os.path.dirname(os.path.abspath(__file__))
     log_path = os.path.join(os.path.dirname(file_dir), "log")
+    if not os.path.exists(log_path):
+        os.makedirs(log_path)
     logger = StockLogger(name="baostock", file_name=os.path.join(log_path, "baostock.log")).logger
 
     @staticmethod
@@ -114,9 +116,9 @@ class BaoStockUtils(DumpStockBase):
             data.to_csv(os.path.join(save_data_dir, f"{stock_id}.csv"), index=False)
         bs.logout()
 
-        @staticmethod
-        def feature_names_to_fields(feature_names):
-            fields = ""
-            for feature in feature_names:
-                fields += feature + ","
-            return fields[:-1]
+    @staticmethod
+    def feature_names_to_fields(feature_names):
+        fields = ""
+        for feature in feature_names:
+            fields += feature + ","
+        return fields[:-1]
