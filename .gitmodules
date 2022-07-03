@@ -1,0 +1,3 @@
+[submodule "alphaengine"]
+	path = alphaengine
+	url = git@github.com:QuantDynamics/alphaengine.git
